@@ -61,52 +61,51 @@ O projeto foi modelado utilizando um **Star Schema**, composto por:
 
 <img width="1536" height="1024" alt="ChatGPT Image 15 de jul  de 2026, 02_45_56" src="https://github.com/user-attachments/assets/1bf23641-560d-4a83-8a3c-6d743caab522" />
 
-
-</p>
-
----
-
 # ⭐ Grain da Tabela Fato
 
-O Grain definido para este projeto é:
+> **Grain definido:**  
+> Cada linha da tabela **fato_plays** representa exatamente uma reprodução (Play) realizada por um usuário.
 
-> **Uma linha representa exatamente uma reprodução (Play) realizada por um usuário.**
+### Por que esse Grain?
 
-Essa decisão garante o menor nível de granularidade disponível, permitindo agregações futuras sem perda de informação.
-
----
-
-# 🧩 Decisões de Modelagem
-
-## 1. Nome e E-mail removidos da dimensão Usuário
-
-Os campos **nome** e **email** foram removidos da dimensão por não possuírem valor analítico.
-
-Além disso, evita exposição desnecessária de informações pessoais.
+- Menor nível de granularidade disponível.
+- Permite agregações por usuário, artista, música, data, dispositivo e plano.
+- Evita perda de informação durante análises futuras.
 
 ---
 
-## 2. Seguidores removidos da dimensão Artista
+# 🧩 Principais Decisões de Modelagem
 
-O campo **seguidores** sofre alterações constantemente.
+## 👤 1. Nome e E-mail removidos da dimensão Usuário
 
-Caso fosse armazenado na dimensão, geraria milhares de novas versões dos registros.
+Os campos **nome** e **email** não foram incluídos na dimensão de usuários.
 
-Em um ambiente real, esse atributo seria tratado utilizando tabelas de Snapshot.
+**Motivos**
+
+- Não possuem valor analítico.
+- Não são utilizados em agrupamentos.
+- Evitam exposição de dados pessoais.
 
 ---
 
-## 3. País do Usuário x País do Play
+## 🎤 2. Remoção do campo Seguidores
 
-O projeto diferencia corretamente dois conceitos:
+O atributo **seguidores** foi removido da dimensão de artistas.
 
-**dim_usuario.pais**
+**Motivos**
 
-Representa o país de residência do usuário.
+- Sofre alterações constantes.
+- Geraria milhares de versões da dimensão.
+- Em ambientes reais esse tipo de informação costuma ser armazenado em tabelas Snapshot.
 
-**fato_plays.pais_play**
+---
 
-Representa o país onde a reprodução ocorreu.
+## 🌎 3. País do Usuário × País da Reprodução
+
+| Campo | Significado |
+|-------|-------------|
+| **dim_usuario.pais** | País de residência do usuário |
+| **fato_plays.pais_play** | País onde a reprodução ocorreu |
 
 Exemplo:
 
@@ -114,45 +113,59 @@ Um usuário brasileiro viajando para Portugal continua sendo um usuário brasile
 
 ---
 
-# 📈 Processo de Construção
+# ⚙ Processo de Construção
 
-## 1️⃣ Carregamento dos CSVs
+## 📥 1. Carregamento dos Dados
 
-Os arquivos CSV foram carregados como Views temporárias utilizando DuckDB.
+Os arquivos CSV foram carregados como **Views temporárias** utilizando DuckDB.
+
+### Resultado
+
+![Views](imagem/views_criadas.png)
 
 ---
 
-## 2️⃣ Construção do Star Schema
+## ⭐ 2. Construção do Star Schema
 
 Foram criadas as seguintes tabelas:
 
-- dim_usuario
-- dim_track
-- dim_artista
-- dim_data
-- fato_play
+| Tipo | Tabela |
+|------|---------|
+| Dimensão | dim_usuario |
+| Dimensão | dim_track |
+| Dimensão | dim_artista |
+| Dimensão | dim_data |
+| Fato | fato_plays |
+
+### Estrutura criada
+
+![Star Schema](imagem/modelo_star_schema.png)
 
 ---
 
-## 3️⃣ Carga das Dimensões
+## 🔑 3. Carga das Dimensões
 
-Durante a carga das dimensões foram geradas Surrogate Keys utilizando:
+Durante a carga das dimensões foram geradas **Surrogate Keys** utilizando:
 
 ```sql
 ROW_NUMBER() OVER()
 ```
 
-Além disso foram adicionados os campos:
+Também foram adicionados os campos:
 
 - dt_inicio
 - dt_fim
 - is_current
 
-preparando o modelo para implementação de SCD.
+preparando o modelo para implementação de Slowly Changing Dimensions.
+
+### Resultado
+
+![Dimensões](imagem/carga_dimensoes.png)
 
 ---
 
-## 4️⃣ Carga da Tabela Fato
+## 🔗 4. Carga da Tabela Fato
 
 A tabela fato foi carregada realizando JOIN entre:
 
@@ -161,104 +174,90 @@ A tabela fato foi carregada realizando JOIN entre:
 - Dim Artista
 - Dim Data
 
-Através das Surrogate Keys.
+utilizando as Surrogate Keys.
+
+### Resultado
+
+![Fato](imagem/carga_fato.png)
 
 ---
 
-# ✔ Validação
+# ✔ Validação da Carga
 
-Após o carregamento:
+Após o carregamento do Data Warehouse foram obtidos os seguintes resultados.
 
-- Usuários: 30
-- Tracks: 31
-- Artistas: 21
-- Plays: 17
+| Tabela | Registros |
+|---------|----------:|
+| Usuários | 30 |
+| Tracks | 31 |
+| Artistas | 21 |
+| Plays | 170 |
+
+### Validação
+
+![Validação](imagem/validacao.png)
 
 ---
 
-# 📊 Análises Realizadas
+# 📊 Análises Desenvolvidas
 
-## 1. Total de reproduções por gênero musical
+## 🎵 Total de reproduções por gênero
 
 Objetivo:
 
-Identificar quais gêneros possuem maior número de reproduções.
+Identificar os gêneros mais reproduzidos.
+
+![Análise 1](imagem/analise_genero.png)
 
 ---
 
-## 2. Tempo médio de reprodução por plano
+## 💳 Tempo médio por plano
 
 Objetivo:
 
-Comparar o comportamento de consumo entre usuários dos diferentes planos.
+Comparar o comportamento dos usuários entre os diferentes planos.
+
+![Análise 2](imagem/analise_plano.png)
 
 ---
 
-## 3. Top 5 artistas por ouvintes únicos
+## 🎤 Top 5 artistas
 
 Objetivo:
 
-Identificar os artistas com maior alcance na plataforma.
+Identificar os artistas com maior número de ouvintes únicos.
+
+![Análise 3](imagem/analise_artistas.png)
 
 ---
 
-## 4. Reproduções por faixa etária e dispositivo
+## 📱 Faixa Etária × Dispositivo
 
 Objetivo:
 
-Analisar como diferentes perfis de usuários consomem música em cada dispositivo
+Analisar como diferentes perfis de usuários consomem música.
+
+![Análise 4](imagem/analise_dispositivo.png)
 
 ---
 
 # 🔄 Slowly Changing Dimensions (SCD)
 
-Durante o desafio foram implementadas estratégias de versionamento das dimensões.
+| Evento | Estratégia | Justificativa |
+|---------|------------|---------------|
+| Mudança de plano | **Tipo 2** | Preservar histórico |
+| Mudança de gravadora | **Tipo 2** | Manter histórico analítico |
+| Correção de gênero | **Tipo 1** | Apenas correção cadastral |
 
-## Evento A
+### Resultado
 
-Mudança de plano dos usuários.
-
-Estratégia utilizada:
-
-**SCD Tipo 2**
-
-Motivo:
-
-Preservar o histórico das mudanças de plano.
-
----
-
-## Evento B
-
-Mudança de gravadora do artista.
-
-Estratégia utilizada:
-
-**SCD Tipo 2**
-
-Motivo:
-
-Permitir análises históricas considerando a gravadora vigente em cada período.
-
----
-
-## Evento C
-
-Correção do gênero musical do artista.
-
-Estratégia utilizada:
-
-**SCD Tipo 1**
-
-Motivo:
-
-Tratava-se apenas de uma correção cadastral, sem necessidade de manter histórico.
+![SCD](imagem/scd.png)
 
 ---
 
 # 📚 Aprendizados
 
-Durante este projeto foram praticados conceitos fundamentais de Engenharia de Dados:
+Durante este desafio foram praticados conceitos fundamentais de Engenharia de Dados.
 
 - Modelagem Dimensional
 - Star Schema
@@ -267,20 +266,12 @@ Durante este projeto foram praticados conceitos fundamentais de Engenharia de Da
 - DuckDB
 - SQL Analítico
 - Slowly Changing Dimensions (Tipo 1 e Tipo 2)
-- Modelagem para Data Warehouse
+- Data Warehouse
 
 ---
 
 # 🚀 Conclusão
 
-Este desafio permitiu construir um Data Warehouse completo utilizando DuckDB, aplicando conceitos de modelagem dimensional, criação de dimensões analíticas, carga de fatos e implementação de versionamento histórico através de SCD.
+Este projeto permitiu construir um Data Warehouse completo utilizando **Python** e **DuckDB**, aplicando conceitos de modelagem dimensional, construção de Star Schema, carga de dimensões e fatos e implementação de Slowly Changing Dimensions.
 
-O resultado é um modelo preparado para suportar análises de negócio de forma consistente, escalável e alinhada às boas práticas de Engenharia de Dados.
-
----
-
-## 👨‍💻 Autor
-
-**Reginaldo Rocha**
-
-
+O resultado é um modelo preparado para análises históricas, consistente e alinhado às boas práticas de Engenharia de Dados.

@@ -120,10 +120,6 @@ Um usuário brasileiro viajando para Portugal continua sendo um usuário brasile
 
 Os arquivos CSV foram carregados como Views temporárias utilizando DuckDB.
 
-### Views criadas
-
-![Views](imagens/views_criadas.jpg)
-
 ---
 
 ## 2️⃣ Construção do Star Schema
@@ -134,11 +130,7 @@ Foram criadas as seguintes tabelas:
 - dim_track
 - dim_artista
 - dim_data
-- fato_plays
-
-### Estrutura criada
-
-![Tabelas](imagens/todas_as_tabelas.jpg)
+- fato_play
 
 ---
 
@@ -180,11 +172,7 @@ Após o carregamento:
 - Usuários: 30
 - Tracks: 31
 - Artistas: 21
-- Plays: 170
-
-### Validação
-
-![Quantidade](imagens/quantidade_de_registros.jpg)
+- Plays: 17
 
 ---
 
@@ -196,10 +184,6 @@ Objetivo:
 
 Identificar quais gêneros possuem maior número de reproduções.
 
-Resultado:
-
-![Gênero](imagens/genero_musical.jpg)
-
 ---
 
 ## 2. Tempo médio de reprodução por plano
@@ -207,10 +191,6 @@ Resultado:
 Objetivo:
 
 Comparar o comportamento de consumo entre usuários dos diferentes planos.
-
-Resultado:
-
-![Plano](imagens/tempo_medio_por_plano.jpg)
 
 ---
 
@@ -220,21 +200,13 @@ Objetivo:
 
 Identificar os artistas com maior alcance na plataforma.
 
-Resultado:
-
-![Top 5](imagens/top_5_artistas.jpg)
-
 ---
 
 ## 4. Reproduções por faixa etária e dispositivo
 
 Objetivo:
 
-Analisar como diferentes perfis de usuários consomem música em cada dispositivo.
-
-Resultado:
-
-![Faixa Etária](imagens/faixa_etaria_x_dispositivo.jpg)
+Analisar como diferentes perfis de usuários consomem música em cada dispositivo
 
 ---
 
@@ -311,4 +283,4 @@ O resultado é um modelo preparado para suportar análises de negócio de forma 
 
 **Reginaldo Rocha**
 
-Engenheiro de Cloud | Engenharia de Dados | Azure | SQL | Python
+

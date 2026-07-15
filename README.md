@@ -59,7 +59,8 @@ O projeto foi modelado utilizando um **Star Schema**, composto por:
 
 <p align="center">
 
-![Star Schema](imagens/modelo_star_schema.png)
+<img width="1536" height="1024" alt="ChatGPT Image 15 de jul  de 2026, 02_45_56" src="https://github.com/user-attachments/assets/1bf23641-560d-4a83-8a3c-6d743caab522" />
+
 
 </p>
 

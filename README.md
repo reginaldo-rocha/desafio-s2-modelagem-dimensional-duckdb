@@ -119,10 +119,6 @@ Um usuário brasileiro viajando para Portugal continua sendo um usuário brasile
 
 Os arquivos CSV foram carregados como **Views temporárias** utilizando DuckDB.
 
-### Resultado
-
-![Views](imagem/views_criadas.png)
-
 ---
 
 ## ⭐ 2. Construção do Star Schema
@@ -136,10 +132,6 @@ Foram criadas as seguintes tabelas:
 | Dimensão | dim_artista |
 | Dimensão | dim_data |
 | Fato | fato_plays |
-
-### Estrutura criada
-
-![Star Schema](imagem/modelo_star_schema.png)
 
 ---
 
@@ -159,9 +151,6 @@ Também foram adicionados os campos:
 
 preparando o modelo para implementação de Slowly Changing Dimensions.
 
-### Resultado
-
-![Dimensões](imagem/carga_dimensoes.png)
 
 ---
 
@@ -176,9 +165,6 @@ A tabela fato foi carregada realizando JOIN entre:
 
 utilizando as Surrogate Keys.
 
-### Resultado
-
-![Fato](imagem/carga_fato.png)
 
 ---
 
@@ -193,9 +179,6 @@ Após o carregamento do Data Warehouse foram obtidos os seguintes resultados.
 | Artistas | 21 |
 | Plays | 170 |
 
-### Validação
-
-![Validação](imagem/validacao.png)
 
 ---
 
@@ -207,7 +190,6 @@ Objetivo:
 
 Identificar os gêneros mais reproduzidos.
 
-![Análise 1](imagem/analise_genero.png)
 
 ---
 
@@ -217,7 +199,7 @@ Objetivo:
 
 Comparar o comportamento dos usuários entre os diferentes planos.
 
-![Análise 2](imagem/analise_plano.png)
+
 
 ---
 
@@ -227,7 +209,7 @@ Objetivo:
 
 Identificar os artistas com maior número de ouvintes únicos.
 
-![Análise 3](imagem/analise_artistas.png)
+
 
 ---
 
@@ -237,7 +219,7 @@ Objetivo:
 
 Analisar como diferentes perfis de usuários consomem música.
 
-![Análise 4](imagem/analise_dispositivo.png)
+
 
 ---
 
@@ -248,10 +230,6 @@ Analisar como diferentes perfis de usuários consomem música.
 | Mudança de plano | **Tipo 2** | Preservar histórico |
 | Mudança de gravadora | **Tipo 2** | Manter histórico analítico |
 | Correção de gênero | **Tipo 1** | Apenas correção cadastral |
-
-### Resultado
-
-![SCD](imagem/scd.png)
 
 ---
 
@@ -275,3 +253,5 @@ Durante este desafio foram praticados conceitos fundamentais de Engenharia de Da
 Este projeto permitiu construir um Data Warehouse completo utilizando **Python** e **DuckDB**, aplicando conceitos de modelagem dimensional, construção de Star Schema, carga de dimensões e fatos e implementação de Slowly Changing Dimensions.
 
 O resultado é um modelo preparado para análises históricas, consistente e alinhado às boas práticas de Engenharia de Dados.
+
+Autor: Reginaldo Rocha
